@@ -43,7 +43,7 @@ const FinancePage = () => {
         <div className="glass-card p-6 rounded-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10"><DollarSign size={80} /></div>
           <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Total Balance</h3>
-          <p className="text-4xl font-bold">${balance.toFixed(2)}</p>
+          <p className="text-4xl font-bold">₹{balance.toFixed(2)}</p>
         </div>
 
         <div className="glass-card p-6 rounded-2xl border-l-4 border-l-[var(--success)]">
@@ -53,7 +53,7 @@ const FinancePage = () => {
               <ArrowUpRight size={18} />
             </div>
           </div>
-          <p className="text-3xl font-bold">${totalIncome.toFixed(2)}</p>
+          <p className="text-3xl font-bold">₹{totalIncome.toFixed(2)}</p>
         </div>
 
         <div className="glass-card p-6 rounded-2xl border-l-4 border-l-red-500">
@@ -63,7 +63,7 @@ const FinancePage = () => {
               <ArrowDownRight size={18} />
             </div>
           </div>
-          <p className="text-3xl font-bold">${totalExpense.toFixed(2)}</p>
+          <p className="text-3xl font-bold">₹{totalExpense.toFixed(2)}</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ const FinancePage = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className={`text-lg font-bold ${t.type === 'income' ? 'text-[var(--success)]' : 'text-white'}`}>
-                  {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+                  {t.type === 'income' ? '+' : '-'}₹{t.amount.toFixed(2)}
                 </div>
                 <button 
                   onClick={async () => {

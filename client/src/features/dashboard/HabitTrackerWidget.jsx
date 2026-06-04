@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Plus, Award, Activity, Check } from 'lucide-react';
+import { Plus, Award, Activity, Check, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useStore from '../../store/useStore';
 import CreateHabitModal from '../../components/modals/CreateHabitModal';
 
 const HabitTrackerWidget = () => {
-  const { habits, fetchHabits, toggleHabitDay, loadingHabits } = useStore();
+  const { habits, fetchHabits, toggleHabitDay, loadingHabits, deleteHabit } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -94,10 +94,17 @@ const HabitTrackerWidget = () => {
                     </div>
                   </td>
                   
-                  <td className="py-3 text-right">
+                  <td className="py-3 pr-2 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <span className="font-bold text-sm">{progress}%</span>
                       <Award size={16} className={`${getBadgeColor(progress)} ${progress === 100 ? 'drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]' : ''}`} />
+                      <button 
+                        onClick={() => deleteHabit(habit._id)}
+                        className="p-1.5 ml-2 rounded-lg hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete Habit"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
