@@ -14,11 +14,25 @@ const navItems = [
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-64 h-full bg-[var(--surface-color)] border-r border-[var(--border-color)] flex flex-col transition-all duration-300">
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar Content */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-[var(--surface-color)] border-r border-[var(--border-color)] flex flex-col transition-transform duration-300
+        md:relative md:translate-x-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
       <div className="p-6">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent)] bg-clip-text text-transparent">
           PPOS
@@ -31,6 +45,7 @@ const Sidebar = () => {
           <NavLink
             key={item.name}
             to={item.path}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
@@ -63,6 +78,7 @@ const Sidebar = () => {
         </button>
       </div>
     </aside>
+    </>
   );
 };
 

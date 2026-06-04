@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, Bell, Sun, Moon, Monitor, User, WifiOff } from 'lucide-react';
+import { Search, Bell, Sun, Moon, Monitor, User, WifiOff, Menu } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
-const TopBar = () => {
+const TopBar = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -20,14 +20,23 @@ const TopBar = () => {
   }, []);
 
   return (
-    <header className="h-16 border-b border-[var(--border-color)] bg-[var(--surface-color)] px-6 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
-      <div className="flex items-center bg-[var(--bg-color)] rounded-lg px-3 py-2 w-96 border border-[var(--border-color)]">
-        <Search size={18} className="text-[var(--text-secondary)] mr-2" />
-        <input 
-          type="text" 
-          placeholder="Search everywhere (Cmd+K)" 
-          className="bg-transparent border-none outline-none text-sm w-full text-[var(--text-primary)]"
-        />
+    <header className="h-16 border-b border-[var(--border-color)] bg-[var(--surface-color)] px-4 md:px-6 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onMenuClick}
+          className="md:hidden p-2 -ml-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+        >
+          <Menu size={24} />
+        </button>
+
+        <div className="hidden md:flex items-center bg-[var(--bg-color)] rounded-lg px-3 py-2 w-96 border border-[var(--border-color)]">
+          <Search size={18} className="text-[var(--text-secondary)] mr-2" />
+          <input 
+            type="text" 
+            placeholder="Search everywhere (Cmd+K)" 
+            className="bg-transparent border-none outline-none text-sm w-full text-[var(--text-primary)]"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-4">

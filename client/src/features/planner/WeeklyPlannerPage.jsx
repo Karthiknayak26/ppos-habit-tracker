@@ -70,7 +70,7 @@ const WeeklyPlannerPage = () => {
         {loadingTasks ? (
           <div className="h-full flex items-center justify-center text-[var(--text-secondary)]">Loading tasks...</div>
         ) : (
-          <div className="flex gap-4 h-full min-w-[1200px]">
+          <div className="flex flex-col xl:flex-row gap-4 h-full xl:min-w-[1200px]">
             {daysOfWeek.map((dayName, index) => {
               const dayTasks = tasks.filter(t => t.day === index);
               
