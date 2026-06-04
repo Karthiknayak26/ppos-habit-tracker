@@ -155,15 +155,25 @@ export const JarvisProvider = ({ children }) => {
   };
 
   const activateJarvis = () => {
+    if (!recognitionRef.current) {
+      alert("Voice recognition is not supported in this browser. Please use Chrome, Safari, or Edge.");
+      return;
+    }
+    
     wakeWordRecognitionRef.current?.stop();
     setTranscript('');
     setJarvisResponse('');
     setIsListening(true);
     isActiveListeningRef.current = true;
+    
     try {
-      recognitionRef.current?.start();
-    } catch(e) {}
-    speak("Yes sir.");
+      // Small delay to ensure the stop() has processed before starting
+      setTimeout(() => {
+        recognitionRef.current?.start();
+      }, 50);
+    } catch(e) {
+      console.error(e);
+    }
   };
 
   const speak = (text) => {
