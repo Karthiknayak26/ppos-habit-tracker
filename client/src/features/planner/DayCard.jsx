@@ -1,5 +1,5 @@
 import TaskItem from './TaskItem';
-import { Plus, CopyRight } from 'lucide-react';
+import { Plus, CopyPlus } from 'lucide-react';
 import ProgressRing from '../../components/charts/ProgressRing';
 
 const DayCard = ({ dayName, dateString, isToday, tasks, onToggleTask, onDeleteTask, onAddTask, onCopyToNextDay }) => {
@@ -22,7 +22,7 @@ const DayCard = ({ dayName, dateString, isToday, tasks, onToggleTask, onDeleteTa
               className="p-1.5 hover:bg-[var(--bg-color)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
               title="Copy to next day"
             >
-              <CopyRight size={18} />
+              <CopyPlus size={18} />
             </button>
           )}
           <div className="w-10 h-10">
