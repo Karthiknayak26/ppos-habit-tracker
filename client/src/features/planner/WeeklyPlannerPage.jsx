@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import DayCard from './DayCard';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Copy } from 'lucide-react';
 import useStore from '../../store/useStore';
 import CreateTaskModal from '../../components/modals/CreateTaskModal';
-import { getStartOfWeek } from '../../utils/dateUtils';
+import { getStartOfWeek, getWeekNumber } from '../../utils/dateUtils';
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const WeeklyPlannerPage = () => {
-  const { tasks, fetchTasks, toggleTask, deleteTask, loadingTasks, selectedDate, setSelectedDate } = useStore();
+  const { tasks, fetchTasks, toggleTask, deleteTask, loadingTasks, selectedDate, setSelectedDate, copyPreviousWeekTasks } = useStore();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
@@ -33,6 +33,13 @@ const WeeklyPlannerPage = () => {
     setSelectedDate(newDate);
   };
 
+  const handleCopyPrevWeek = () => {
+    const prevWeekDate = new Date(selectedDate);
+    prevWeekDate.setDate(selectedDate.getDate() - 7);
+    const { weekNumber, year } = getWeekNumber(prevWeekDate);
+    copyPreviousWeekTasks(weekNumber, year);
+  };
+
   const handleOpenModal = (dayIndex) => {
     setSelectedDayIndex(dayIndex);
     setIsModalOpen(true);
@@ -51,17 +58,28 @@ const WeeklyPlannerPage = () => {
           <p className="text-[var(--text-secondary)] mt-1">Organize your recurring weekly tasks and routines.</p>
         </div>
         
-        <div className="flex items-center gap-4 bg-[var(--surface-color)] p-2 rounded-xl border border-[var(--border-color)]">
-          <button onClick={handlePrevWeek} className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors">
-            <ChevronLeft size={20} />
+        <div className="flex flex-wrap items-center gap-4">
+          <button 
+            onClick={handleCopyPrevWeek} 
+            className="flex items-center gap-2 bg-[var(--surface-color)] border border-[var(--border-color)] px-4 py-2 rounded-xl hover:bg-[var(--bg-color)] transition-colors text-[var(--text-secondary)] hover:text-white"
+            title="Copy tasks from the previous week"
+          >
+            <Copy size={18} />
+            <span className="hidden sm:inline">Copy Prev Week</span>
           </button>
-          <span className="font-bold min-w-[120px] text-center">
-            {startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
-            {new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 6)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-          </span>
-          <button onClick={handleNextWeek} className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors">
-            <ChevronRight size={20} />
-          </button>
+
+          <div className="flex items-center gap-4 bg-[var(--surface-color)] p-2 rounded-xl border border-[var(--border-color)]">
+            <button onClick={handlePrevWeek} className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors">
+              <ChevronLeft size={20} />
+            </button>
+            <span className="font-bold min-w-[120px] text-center">
+              {startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
+              {new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 6)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            </span>
+            <button onClick={handleNextWeek} className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors">
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
       </div>
 

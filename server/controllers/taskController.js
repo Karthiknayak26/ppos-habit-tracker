@@ -165,3 +165,49 @@ export const deleteTask = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Copy tasks from a previous week to a target week
+// @route   POST /api/tasks/copy-previous
+// @access  Private
+export const copyPreviousWeekTasks = async (req, res, next) => {
+  try {
+    const { fromWeek, fromYear, toWeek, toYear } = req.body;
+
+    if (!fromWeek || !fromYear || !toWeek || !toYear) {
+      res.status(400);
+      throw new Error('Missing required fields');
+    }
+
+    const previousTasks = await Task.find({
+      user: req.user._id,
+      weekNumber: parseInt(fromWeek),
+      year: parseInt(fromYear)
+    });
+
+    if (!previousTasks || previousTasks.length === 0) {
+      return res.json({ message: 'No tasks to copy' });
+    }
+
+    const newTasks = previousTasks.map(task => ({
+      user: req.user._id,
+      title: task.title,
+      description: task.description,
+      day: task.day,
+      date: null, // Reset specific date
+      priority: task.priority,
+      category: task.category,
+      order: task.order,
+      weekNumber: parseInt(toWeek),
+      year: parseInt(toYear),
+      completed: false,
+      completedAt: null
+    }));
+
+    await Task.insertMany(newTasks);
+    
+    req.app.get('io').to(req.user._id.toString()).emit('tasks_updated');
+    res.status(201).json({ message: 'Tasks copied successfully', count: newTasks.length });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -81,6 +81,22 @@ const useStore = create((set, get) => ({
       throw error;
     }
   },
+  copyPreviousWeekHabits: async (fromWeek, fromYear) => {
+    try {
+      const { selectedWeek, selectedYear } = get();
+      await api.post('/habits/copy-previous', {
+        fromWeek,
+        fromYear,
+        toWeek: selectedWeek,
+        toYear: selectedYear
+      });
+      get().fetchHabits();
+    } catch (error) {
+      console.error('Failed to copy previous habits', error);
+      throw error;
+    }
+  },
+
 
   // --- TASKS STATE ---
   tasks: [],
@@ -131,6 +147,22 @@ const useStore = create((set, get) => ({
       throw error;
     }
   },
+  copyPreviousWeekTasks: async (fromWeek, fromYear) => {
+    try {
+      const { selectedWeek, selectedYear } = get();
+      await api.post('/tasks/copy-previous', {
+        fromWeek,
+        fromYear,
+        toWeek: selectedWeek,
+        toYear: selectedYear
+      });
+      get().fetchTasks();
+    } catch (error) {
+      console.error('Failed to copy previous tasks', error);
+      throw error;
+    }
+  },
+
 
   // --- NOTES STATE ---
   notes: [],

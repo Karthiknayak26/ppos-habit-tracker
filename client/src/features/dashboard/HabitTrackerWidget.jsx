@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Plus, Award, Activity, Check, Trash2 } from 'lucide-react';
+import { Plus, Award, Activity, Check, Trash2, Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useStore from '../../store/useStore';
 import CreateHabitModal from '../../components/modals/CreateHabitModal';
+import { getWeekNumber } from '../../utils/dateUtils';
 
 const HabitTrackerWidget = () => {
-  const { habits, fetchHabits, toggleHabitDay, loadingHabits, deleteHabit } = useStore();
+  const { habits, fetchHabits, toggleHabitDay, loadingHabits, deleteHabit, selectedDate, copyPreviousWeekHabits } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchHabits();
-  }, [fetchHabits]);
+  }, [fetchHabits, selectedDate]);
 
   const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -20,6 +21,13 @@ const HabitTrackerWidget = () => {
     if (progress >= 70) return 'text-gray-300';
     if (progress >= 40) return 'text-amber-600';
     return 'text-[var(--border-color)]';
+  };
+
+  const handleCopyPrevWeek = () => {
+    const prevWeekDate = new Date(selectedDate);
+    prevWeekDate.setDate(selectedDate.getDate() - 7);
+    const { weekNumber, year } = getWeekNumber(prevWeekDate);
+    copyPreviousWeekHabits(weekNumber, year);
   };
 
   return (
@@ -32,12 +40,23 @@ const HabitTrackerWidget = () => {
           </h2>
           <p className="text-sm text-[var(--text-secondary)] mt-1">This week's consistency</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors border border-dashed border-[var(--border-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] text-[var(--text-secondary)]"
-        >
-          <Plus size={20} />
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleCopyPrevWeek}
+            className="p-2 flex items-center gap-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors border border-[var(--border-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] text-[var(--text-secondary)]"
+            title="Copy habits from the previous week"
+          >
+            <Copy size={20} />
+            <span className="hidden sm:inline text-sm font-medium">Copy Prev Week</span>
+          </button>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="p-2 hover:bg-[var(--bg-color)] rounded-lg transition-colors border border-dashed border-[var(--border-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] text-[var(--text-secondary)]"
+            title="Add Habit"
+          >
+            <Plus size={20} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-x-auto min-h-0">

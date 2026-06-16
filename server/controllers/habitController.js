@@ -143,6 +143,54 @@ export const deleteHabit = async (req, res, next) => {
   }
 };
 
+// @desc    Copy habits from a previous week to a target week
+// @route   POST /api/habits/copy-previous
+// @access  Private
+export const copyPreviousWeekHabits = async (req, res, next) => {
+  try {
+    const { fromWeek, fromYear, toWeek, toYear } = req.body;
+
+    if (!fromWeek || !fromYear || !toWeek || !toYear) {
+      res.status(400);
+      throw new Error('Missing required fields');
+    }
+
+    const previousHabits = await Habit.find({
+      user: req.user._id,
+      weekNumber: parseInt(fromWeek),
+      year: parseInt(fromYear)
+    });
+
+    if (!previousHabits || previousHabits.length === 0) {
+      return res.json({ message: 'No habits to copy' });
+    }
+
+    const newHabits = previousHabits.map(habit => ({
+      user: req.user._id,
+      name: habit.name,
+      category: habit.category,
+      icon: habit.icon,
+      weekData: {
+        mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false
+      },
+      progress: 0,
+      streak: {
+        current: habit.streak.current,
+        longest: habit.streak.longest
+      },
+      weekNumber: parseInt(toWeek),
+      year: parseInt(toYear)
+    }));
+
+    await Habit.insertMany(newHabits);
+    
+    req.app.get('io').to(req.user._id.toString()).emit('habits_updated');
+    res.status(201).json({ message: 'Habits copied successfully', count: newHabits.length });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Helper function
 function getCurrentWeekNumber() {
     const d = new Date();
