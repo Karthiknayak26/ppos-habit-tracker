@@ -162,6 +162,21 @@ const useStore = create((set, get) => ({
       throw error;
     }
   },
+  copyDayTasks: async (fromDay, toDay) => {
+    try {
+      const { selectedWeek, selectedYear } = get();
+      await api.post('/tasks/copy-day', {
+        fromDay,
+        toDay,
+        weekNumber: selectedWeek,
+        year: selectedYear
+      });
+      get().fetchTasks();
+    } catch (error) {
+      console.error('Failed to copy day tasks', error);
+      throw error;
+    }
+  },
 
 
   // --- NOTES STATE ---

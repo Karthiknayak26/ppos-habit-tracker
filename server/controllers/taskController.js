@@ -211,3 +211,64 @@ export const copyPreviousWeekTasks = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Copy tasks from one day to another day
+// @route   POST /api/tasks/copy-day
+// @access  Private
+export const copyDayTasks = async (req, res, next) => {
+  try {
+    const { fromDay, toDay, weekNumber, year } = req.body;
+
+    if (fromDay === undefined || toDay === undefined || !weekNumber || !year) {
+      res.status(400);
+      throw new Error('Missing required fields');
+    }
+
+    const previousTasks = await Task.find({
+      user: req.user._id,
+      day: parseInt(fromDay),
+      weekNumber: parseInt(weekNumber),
+      year: parseInt(year)
+    });
+
+    if (!previousTasks || previousTasks.length === 0) {
+      return res.json({ message: 'No tasks to copy' });
+    }
+
+    // Determine target week/year (if copying from Sunday (6) to Monday (0) usually implies next week)
+    let targetWeekNumber = parseInt(weekNumber);
+    let targetYear = parseInt(year);
+    
+    // Very basic rollover logic if user copies from Sunday to Monday
+    if (fromDay === 6 && toDay === 0) {
+       targetWeekNumber += 1;
+       // Assuming 52 weeks a year roughly for this basic logic. In a real app we'd use robust date math.
+       if (targetWeekNumber > 52) {
+         targetWeekNumber = 1;
+         targetYear += 1;
+       }
+    }
+
+    const newTasks = previousTasks.map(task => ({
+      user: req.user._id,
+      title: task.title,
+      description: task.description,
+      day: parseInt(toDay),
+      date: null,
+      priority: task.priority,
+      category: task.category,
+      order: task.order,
+      weekNumber: targetWeekNumber,
+      year: targetYear,
+      completed: false,
+      completedAt: null
+    }));
+
+    await Task.insertMany(newTasks);
+    
+    req.app.get('io').to(req.user._id.toString()).emit('tasks_updated');
+    res.status(201).json({ message: 'Tasks copied successfully', count: newTasks.length });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,8 +1,8 @@
 import TaskItem from './TaskItem';
-import { Plus } from 'lucide-react';
+import { Plus, CopyRight } from 'lucide-react';
 import ProgressRing from '../../components/charts/ProgressRing';
 
-const DayCard = ({ dayName, dateString, isToday, tasks, onToggleTask, onDeleteTask, onAddTask }) => {
+const DayCard = ({ dayName, dateString, isToday, tasks, onToggleTask, onDeleteTask, onAddTask, onCopyToNextDay }) => {
   const completedTasks = tasks.filter(t => t.completed).length;
   const progress = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
@@ -15,10 +15,21 @@ const DayCard = ({ dayName, dateString, isToday, tasks, onToggleTask, onDeleteTa
           <h3 className={`font-bold text-lg ${isToday ? 'text-[var(--primary-color)]' : ''}`}>{dayName}</h3>
           <p className="text-xs text-[var(--text-secondary)]">{dateString}</p>
         </div>
-        <div className="w-10 h-10">
-          {tasks.length > 0 && (
-            <ProgressRing progress={progress} size={40} strokeWidth={4} />
+        <div className="flex items-center gap-2">
+          {tasks.length > 0 && onCopyToNextDay && (
+            <button 
+              onClick={onCopyToNextDay}
+              className="p-1.5 hover:bg-[var(--bg-color)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
+              title="Copy to next day"
+            >
+              <CopyRight size={18} />
+            </button>
           )}
+          <div className="w-10 h-10">
+            {tasks.length > 0 && (
+              <ProgressRing progress={progress} size={40} strokeWidth={4} />
+            )}
+          </div>
         </div>
       </div>
 

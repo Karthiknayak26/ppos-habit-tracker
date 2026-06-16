@@ -6,7 +6,8 @@ import {
   deleteTask,
   toggleTask,
   reorderTasks,
-  copyPreviousWeekTasks
+  copyPreviousWeekTasks,
+  copyDayTasks
 } from '../controllers/taskController.js';
 import protect from '../middleware/auth.js';
 
@@ -17,6 +18,7 @@ router.route('/')
   .post(protect, createTask);
 
 router.post('/copy-previous', protect, copyPreviousWeekTasks);
+router.post('/copy-day', protect, copyDayTasks);
 
 router.put('/reorder', protect, reorderTasks);
 

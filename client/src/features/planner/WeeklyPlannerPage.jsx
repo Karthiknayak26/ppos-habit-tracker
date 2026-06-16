@@ -106,6 +106,7 @@ const WeeklyPlannerPage = () => {
                   onToggleTask={toggleTask}
                   onDeleteTask={deleteTask}
                   onAddTask={() => handleOpenModal(index)}
+                  onCopyToNextDay={index < 6 ? () => useStore.getState().copyDayTasks(index, index + 1) : null}
                 />
               </div>
             );
